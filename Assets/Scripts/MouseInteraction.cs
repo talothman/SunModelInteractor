@@ -35,7 +35,7 @@ public class MouseInteraction : MonoBehaviour
                 cursorObjectRenderer.enabled = true;
                 cursorObject.position = raycastHit.point + Vector3.Project(positionOffset, raycastHit.normal);
                 Quaternion targetRotation = Quaternion.FromToRotation(-Vector3.forward, raycastHit.normal);
-                cursorObject.rotation = Quaternion.RotateTowards(cursorObject.rotation, targetRotation, 1);
+                cursorObject.rotation = Quaternion.RotateTowards(cursorObject.rotation, targetRotation, 3);
             } else {
                 cursorObjectRenderer.enabled = false;
             }
