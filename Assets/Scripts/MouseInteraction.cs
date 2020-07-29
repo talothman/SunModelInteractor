@@ -19,14 +19,18 @@ public class MouseInteraction : MonoBehaviour
     private void Start()
     {
         cursorObjectRenderer = cursorObject.GetComponent<MeshRenderer>();
+        cursorObjectRenderer.enabled = false;
         mainCamera = Camera.main;
         mainCamera.depthTextureMode = DepthTextureMode.DepthNormals;
-        cursorObjectRenderer.enabled = false;
     }
 
     private void Update()
     {
         CheckScale();
+        CheckMousePosition();
+    }
+
+    private void CheckMousePosition() {
         mousePosition = Mouse.current.position.ReadValue();
         rayIntoWorld = mainCamera.ScreenPointToRay(mousePosition);
 
