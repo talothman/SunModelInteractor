@@ -10,6 +10,9 @@ public class TouchSurfaceInteraction : MonoBehaviour
     private Transform modelTransform;
     [SerializeField]
     private Transform raySource;
+    
+    private ModelLaserPointer laserPointer;
+    private float pointerLength = 5f;
     private MeshRenderer cursorObjectRenderer;
 
     private int layerMask = 1 << 8;
@@ -20,27 +23,24 @@ public class TouchSurfaceInteraction : MonoBehaviour
     {
         cursorObjectRenderer = cursorObject.GetComponent<MeshRenderer>();
         cursorObjectRenderer.enabled = false;
+        laserPointer = GetComponentInChildren<ModelLaserPointer>();
     }
 
     private void Update() {
         //OVRInput.Axis1D()
         CheckRaycastToObject();
+        laserPointer.SetPointerVisability(true);
+
     }
 
-    // private void OnCollisionStay(Collision other) {
-    //     if((1 << other.gameObject.layer) == layerMask) {
-    //         cursorObjectRenderer.enabled = true;
-    //         cursorObject.position = other.collider.ClosestPoint(transform.position) + Vector3.Project(positionOffset, other.GetContact(0).normal);
-    //         Quaternion targetRotation = Quaternion.FromToRotation(-Vector3.forward, other.GetContact(0).normal);
-    //         cursorObject.rotation = Quaternion.RotateTowards(cursorObject.rotation, targetRotation, 50);
-    //     }
-    // }
-
     private void CheckRaycastToObject() {      
-
-        controllerToModelRay = new Ray(transform.position, modelTransform.position-transform.position);
+        controllerToModelRay = new Ray(raySource.position, raySource.TransformDirection(Vector3.forward));
+        laserPointer.SetLinePositions(controllerToModelRay.origin, transform.position + transform.forward * pointerLength);
+        
         if (Physics.Raycast(controllerToModelRay, out controllerToModelRaycastHit, 10f, layerMask)) {
-            if (Vector3.Distance(controllerToModelRaycastHit.point, transform.position) > 0.1f) {
+            laserPointer.SetLinePositions(raySource.position, controllerToModelRaycastHit.point);
+            
+            if (Vector3.Distance(controllerToModelRaycastHit.point, raySource.position) > 0.1f) {
                 cursorObjectRenderer.enabled = false;
                 return;
             }
